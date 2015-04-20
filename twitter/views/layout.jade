@@ -4,37 +4,7 @@ html
 		title 트위터
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src="//code.jquery.com/jquery-1.11.2.min.js").
-		script(type='text/javascript').
-			$(document).ready(function(){
-				$.getJSON("/data" ,function(data){
-					$.each(data, function(index, element) {
-						$.each( element.tweet_message, function(index, message){
-							if ( typeof message[0] !== 'undefined' ){
-								var output = "";
-								output += "<a href='/" + element.id+ "'>" + element.name + "</a>";
-								output += "<p>" + message[0] + "&nbsp;&nbsp;&nbsp;<span>";
-								output += "</span>" + message[1] + "</p><hr/>";
-								$(output).prependTo($('#tweetBox'));
-							}
-						});
-					});
-				});
-		
-
-				$('button').click( function(e){
-					e.preventDefault();
-					$.post("/", {tweet : $('#tweetInput').val() }, function(){
-						var text = $('#tweetInput').val();
-						var date = new Date();
-						var output = "";
-						output += "<a href='/#{user.id}'> #{user.name}</a>";
-						output += "<p>" + text + "&nbsp;&nbsp;&nbsp;<span>";
-						output += "</span>" + date + "</p><hr/>";
-						$(output).prependTo($('#tweetBox'));
-						$("#tweetInput").val('');
-						});
-				});
-			});
+		block script
 	body
 		#wrapper
 			#nav_bar
@@ -52,16 +22,8 @@ html
 							a(href="/logout") 로그아웃 
 
 			#left_div
-				div
-					p
-						a(href="/#{user.id}") #{user.name}
-					p @#{user.id}
-					p tweets #{user.tweets} following #{user.following} follower #{user.follower}
+				block left
+				
 			#right_div
-				#tweetDiv
-					form
-						input(type="text" placeholder="무슨 일이 일어나고 있나요?")#tweetInput
-						button tweet
-					#tweetBox
-				div 
-				block content
+				block right
+				

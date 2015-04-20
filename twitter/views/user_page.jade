@@ -1,4 +1,41 @@
 extends layout
 
-block content
-  h1= title
+block script
+	script(type='text/javascript').
+		$(document).ready(function(){
+			// edit profile
+			$('button[name="edit_profile"').click(function(){
+				var name = prompt("새로운 이름을 입력하세요");
+				if (name){
+					$.post("/edit_profile", {new_name : name }, function(){
+						location.reload();
+						});
+				};
+			});
+			// unfollow
+			$('button[name="unfollow"').click(function(){
+				$.post("/unfollow" , { id : "#{user.id}" } , function(){
+					location.reload();
+					});
+			});
+			// follow
+			$('button[name="follow"').click(function(){
+				$.post("/follow" , { id : "#{user.id}" } , function(){
+					location.reload();
+					});
+			});
+		});
+block left
+	div
+		p
+			a(href="/#{user.id}" name="user_name") #{user.name}
+		p @#{user.id}
+		p tweets #{user.tweet_number} following #{user.following_number} follower #{user.follower_number}
+		if user_info == "my id"
+			button(name="edit_profile") 프로필수정
+		else if user_info == "now following"
+			button(name="unfollow") 언팔로우
+		else
+			button(name="follow") 팔로우
+
+block right
