@@ -9,7 +9,7 @@ html
 		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js").
 		script(type='text/javascript').
 			$(document).ready(function(){
-				$('button').click( function(e){
+				$('button[name="login_button"]').click( function(e){
 					e.preventDefault();
 					var id = $('input[name=id]').val();
 					var pw = $('input[name=pw]').val();
@@ -26,6 +26,29 @@ html
 					});
 				});
 
+				$('button[name="sign_up_button"]').click( function(e){
+					e.preventDefault();
+					var id = $('#signUpInputId').val();
+					var pw1 = $('#signUpInputPassword1').val();
+					var pw2 = $('#signUpInputPassword2').val();
+					var err = "";
+
+					// password check
+					if (pw1 != pw2){
+						$(".form-group.password").addClass('has-error').children("label").text("passwords are not same.").css('color','red');	
+					}
+
+					$.post('/signUp', { id : id , pw : pw1} , function (data){
+						// duplicated id check
+						if (data == "yes"){
+							$('#myModal').modal('hide');
+							location = '/';
+						} else {
+							$(".form-group.id").addClass('has-error').children("label").text("This id is alreay used").css('color','red');
+						}
+					});
+				});
+
 			});
 			
 	body
@@ -33,4 +56,20 @@ html
 			div(class="form-group")
 				input(type="text" class="form-control" placeholder="id" name="id")
 				input(type="password" class="form-control" placeholder="password" name="pw")
-				button(type="submit" class="btn btn-default") Submit
+				button(type="submit" class="btn btn-default" name="login_button") Submit
+		div
+			button(type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal") sign up
+		#myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+			.modal-dialog
+				.modal-content
+					.modal-body
+						form
+							.form-group.id
+								label(for='signUpInputId') id
+								input#signUpInputId.form-control(type='text', placeholder='Enter id')
+							.form-group.password
+								label(for='signUpInputPassword1') Password
+								input#signUpInputPassword1.form-control(type='password', placeholder='Password')
+								input#signUpInputPassword2.form-control(type='password', placeholder='Password confirm')
+							button.btn.btn-default(type='button', data-dismiss='modal') Close
+							button.btn.btn-primary(type='button' name="sign_up_button") sign up

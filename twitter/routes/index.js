@@ -54,6 +54,26 @@ router.get('/logout', function(req,res,next){
 	});
 });
 
+router.post('/signUp', function(req,res,next){
+	var query = User.findOne({}).where('id', req.body.id);
+	query.exec( function( err, user_doc){
+		if (user_doc){
+			// This id is alreay used
+			res.end("no");
+		} else {	
+			var new_user = new User({
+				id : req.body.id,
+				pw : req.body.pw,
+				name : "test_name"
+			});
+			new_user.save( function( err, result){
+				console.log(" new user saved : " + result);
+			});
+			res.end("yes");
+		}
+	});
+});
+
 // 홈
 router.get('/', function(req, res, next) {
 	if (req.session.userId == null ){
