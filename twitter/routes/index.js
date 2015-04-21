@@ -1,4 +1,5 @@
 var express = require('express');
+var crypto = require('crypto');
 var db = require('mongojs').connect('node', ['users']);
 var router = express.Router();
 
@@ -20,6 +21,11 @@ function userSet(data){
 	console.log( "유저 데이터 서버에 저장 완료");
 };
 
+// crypto password
+function hashPW(pwd){
+	return crypto.createHash('sha256').update(pwd).digest('base64').toString();
+};
+
 // 로그인 
 router.get('/login', function(req,res,next){
 	res.render('login' , { layout : false });
@@ -31,13 +37,12 @@ router.post('/login', function(req,res,next){
 	if ( rid != "" && rpw != ""){
 		var query = User.findOne({});
 		query.where('id',rid);
-		query.where('pw',rpw);
+		query.where('pw', hashPW(rpw));
 		query.exec( function(err, result){
 			if (err) return handleError(err);
 			if (result){
 				req.session.userId = rid;
 				req.session.cookie.expires = false;
-				userSet(result);
 				res.end("yes");	
 			} else{
 				console.log("데이터가 없습니다.");
@@ -63,7 +68,7 @@ router.post('/signUp', function(req,res,next){
 		} else {	
 			var new_user = new User({
 				id : req.body.id,
-				pw : req.body.pw,
+				pw : hashPW(req.body.pw),
 				name : "test_name"
 			});
 			new_user.save( function( err, result){
