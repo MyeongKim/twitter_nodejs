@@ -2,28 +2,59 @@ doctype html
 html
 	head
 		title 트위터
+		link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
+		link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css")
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src="//code.jquery.com/jquery-1.11.2.min.js").
+		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
 		block script
 	body
 		#wrapper
 			#nav_bar
-				ul
-					li
-						a(href="/") 홈 
-					li
-						a(href="/i/notifications") 알림 
-					li
-						a(href="/") 쪽지 
-					li
-						a(href="/i/discover") 발견하기
-					#manage_account
-						li
-							a(href="/logout") 로그아웃 
+				nav.navbar.navbar-default
+					.navbar-header
+						a.navbar-brand(href='#') Twitter with node.js
+						div
+							ul.nav.navbar-nav
+								li
+									a(href='/') 홈 
+								li
+									a(href="/i/notifications") 알림 
+								li
+									a(href="/") 쪽지 
+								li
+									a(href="/i/discover") 발견하기
+								li
+									a(href="/logout") 로그아웃 
+
+
 
 			#left_div
-				block left
+				.thumbnail
+						.caption
+							h3
+								a(href="/#{user.id}") #{user.name}
+							p @#{user.id}
+							p tweets #{user.tweet_number} following #{user.following_number} follower #{user.follower_number}
+								block left
+
+				
 				
 			#right_div
+				#tweetDiv
+					form
+						.form-group
+							input.form-control(type='text', placeholder='무슨 일이 일어나고 있나요?')
+							button.btn.btn-default(type='submit') tweet
+
+
+					#tweetBox
+						-for(var p in tweet)
+							.panel.panel-default
+								.panel-heading
+									a(href="/#{tweet[p].id}") #{tweet[p].name}
+								.panel-body
+									p #{tweet[p].body}
+									p #{tweet[p].date}
 				block right
 				

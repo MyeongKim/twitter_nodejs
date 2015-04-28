@@ -41,7 +41,8 @@ router.post('/login', function(req,res,next){
 		query.exec( function(err, result){
 			if (err) return handleError(err);
 			if (result){
-				req.session.userId = rid;
+				req.session.userId = result.id;
+				req.session.name = result.name;
 				req.session.cookie.expires = false;
 				res.end("yes");	
 			} else{
@@ -85,38 +86,38 @@ router.get('/', function(req, res, next) {
 		res.redirect('/login');
 	} else {
 		var user_data = {};
+		// make array to push users
+		var following_user = [req.session.userId];
 		var query = User.findOne({}).where('id', req.session.userId);
 		query.exec( function( err, user_doc){
 			if ( user_doc != null ){
+				// save user data
 				user_data = user_doc;
 				user_data.tweet_number = user_doc.tweet_id.length;
 				user_data.follower_number = user_doc.follower.length;
 				user_data.following_number = user_doc.following.length;
+
+				// get user and following_user tweets
+				for ( i in user_doc.following.toString()){
+					var q = user_doc.following[i];
+					if ( q != undefined ){
+						following_user.push(q);
+					}
+				}
+
+				Tweet.find()
+				.where('id')
+				.in(following_user)
+				.sort({ date : -1})
+				.exec( function(err, records){
+					res.render('index', { user : user_data, tweet : records });
+				});
 			};
-			res.render('index', { user : user_data });	
 		});
 	}
 });
 
 router.get('/data', function(req,res,next){
-	var following_user = [req.session.userId];
-	var query = User.findOne({}).where('id', req.session.userId);
-	query.exec( function(err, user_doc){
-		for ( id in user_doc.following.toString()){
-			var q = user_doc.following[id];
-			if ( q != undefined ){
-				following_user.push(q);
-			}
-		}
-		Tweet.find()
-		.where('id')
-		.in(following_user)
-		.sort({ date : 'asc'})
-		.exec( function(err, records){
-			res.send(records);
-		});
-	});
-
 	
 });
 
@@ -124,20 +125,18 @@ router.post('/', function(req, res, next){
 	var new_t = new Tweet({
 		body: req.body.tweet
 	});
-
-	new_t.id = user.id;
-	new_t.name = user.name;
+	new_t.id = req.session.userId;
+	new_t.name = req.session.name;
 	new_t.save(function(err, doc){
 		console.log(" save" + doc);
-		var query = User.find({}).where('id', user.id);
+		var query = User.findOne({}).where('id', req.session.userId);
 		query.exec( function(err, user_doc){
-			var query = user_doc[0].update( { $push : { tweet_id : doc._id}});
+			var query = user_doc.update( { $push : { tweet_id : doc._id}});
 			query.exec(function(err, results){
 				console.log(results);
 			});
 		});
 	});
-
 	res.end('saved');
 });
 
@@ -145,6 +144,7 @@ router.post('/', function(req, res, next){
 router.get('/:id', function(req,res,next){
 	var user_data = {};
 	var user_info = "";
+	var tweet = [];
 	var query = User.findOne({}).where('id', req.params.id);
 	query.exec( function( err, user_doc){
 		if ( user_doc != null ){
@@ -152,7 +152,7 @@ router.get('/:id', function(req,res,next){
 			user_data.tweet_number = user_doc.tweet_id.length;
 			user_data.follower_number = user_doc.follower.length;
 			user_data.following_number = user_doc.following.length;
-
+			
 			if (user_doc.id == req.session.userId){
 				user_info = "my id";
 			} else if ( user_doc.follower.indexOf(req.session.userId) != -1  ) {
@@ -160,11 +160,26 @@ router.get('/:id', function(req,res,next){
 			} else{
 				user_info = "not following"
 			}
+			Tweet.find()
+			.where('id', user_doc.id)
+			.sort({ date : -1})
+			.exec( function(err, records){
+				tweet = records;
+				res.render('user_page', { user : user_data ,tweet : tweet,  user_info : user_info.toString() });	
+			});
+
 		};
-		res.render('user_page', { user : user_data , user_info : user_info.toString() });	
 	});
 });
 
+router.get('/user_tweet', function(req,res,next){
+	Tweet.find()
+	.where('id', req.query.id)
+	.sort({ date : 'asc'})
+	.exec( function(err, records){
+		res.send({ "dd" : "sdf"});
+	});
+});
 //edit user name 
 router.post('/edit_profile', function(req,res,next){
 	var new_name = req.body.new_name;
