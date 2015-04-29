@@ -58,7 +58,7 @@ html
 				input(type="password" class="form-control" placeholder="password" name="pw")
 				button(type="submit" class="btn btn-default" name="login_button") Submit
 		div
-			button(type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal") sign up
+			button(type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal") sign up			
 		#myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
 			.modal-dialog
 				.modal-content
@@ -73,3 +73,4 @@ html
 								input#signUpInputPassword2.form-control(type='password', placeholder='Password confirm')
 							button.btn.btn-default(type='button', data-dismiss='modal') Close
 							button.btn.btn-primary(type='button' name="sign_up_button") sign up
+		a(href='/auth/facebook') Facebook
