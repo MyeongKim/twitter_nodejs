@@ -6,27 +6,12 @@ var router = express.Router();
 var User = require('./schema').User;
 var Tweet = require('./schema').Tweet;
 
-// 유저 데이터
-var user = {};
-
-function userSet(data){
-	user.name = data.name;
-	user.id = data.id;
-	user.following = data.following;
-	user.follower = data.follower;
-	user.tweet_id = data.tweet_id;
-	user.following_number = data.following.length;
-	user.follower_number = data.follower.length;
-	user.tweet_number = data.tweet_id.length;
-	console.log( "유저 데이터 서버에 저장 완료");
-};
-
 // crypto password
 function hashPW(pwd){
 	return crypto.createHash('sha256').update(pwd).digest('base64').toString();
 };
 
-// 로그인 
+// login 
 router.get('/login', function(req,res,next){
 	res.render('login' , { layout : false });
 });
@@ -115,10 +100,6 @@ router.get('/', function(req, res, next) {
 			};
 		});
 	}
-});
-
-router.get('/data', function(req,res,next){
-	
 });
 
 router.post('/', function(req, res, next){
