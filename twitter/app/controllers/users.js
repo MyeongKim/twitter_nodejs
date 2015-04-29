@@ -1,5 +1,4 @@
 var crypto = require('crypto');
-var db = require('mongojs').connect('node', ['users']);
 var User = require('../models/schema').User;
 var Tweet = require('../models/schema').Tweet;
 
@@ -84,33 +83,21 @@ exports.home = function(req,res,next){
 						following_user.push(q);
 					}
 				}
-
-				Tweet.find()
-				.where('id')
-				.in(following_user)
-				.sort({ date : -1})
-				.exec( function(err, records){
-					res.render('index', { user : user_data, tweet : records });
-				});
+				req.id = following_user;
+				req.sender = {user : user_data};
+				req.view = 'index';
+				next();
 			};
 		});
 	};
 };
 
-exports.create = function(req, res, next){
-	var new_t = new Tweet({
-		body: req.body.tweet
-	});
-	new_t.id = req.session.userId;
-	new_t.name = req.session.name;
-	new_t.save(function(err, doc){
-		console.log(" save" + doc);
-		var query = User.findOne({}).where('id', req.session.userId);
-		query.exec( function(err, user_doc){
-			var query = user_doc.update( { $push : { tweet_id : doc._id}});
-			query.exec(function(err, results){
-				console.log(results);
-			});
+exports.updateUserTweet = function(req, res, next){
+	var query = User.findOne({}).where('id', req.session.userId);
+	query.exec( function(err, user_doc){
+		var query = user_doc.update( { $push : { tweet_id : req._id}});
+		query.exec(function(err, results){
+			console.log(results);
 		});
 	});
 	res.end('saved');
@@ -135,13 +122,12 @@ exports.userPage = function(req, res, next){
 			} else{
 				user_info = "not following"
 			}
-			Tweet.find()
-			.where('id', user_doc.id)
-			.sort({ date : -1})
-			.exec( function(err, records){
-				tweet = records;
-				res.render('user_page', { user : user_data ,tweet : tweet,  user_info : user_info.toString() });	
-			});
+
+			req.sender = {user : user_data, user_info : user_info.toString()};
+			req.id = [user_doc.id];
+			req.view = 'user_page';
+			next();
+			
 
 		};
 	});
