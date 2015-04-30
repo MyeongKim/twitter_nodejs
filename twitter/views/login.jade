@@ -73,4 +73,16 @@ html
 								input#signUpInputPassword2.form-control(type='password', placeholder='Password confirm')
 							button.btn.btn-default(type='button', data-dismiss='modal') Close
 							button.btn.btn-primary(type='button' name="sign_up_button") sign up
-		a(href='/auth/facebook') Facebook
+		#snsLoginDiv
+			.panel.panel-default
+				.panel-heading
+					h3.panel-title Login with SNS
+				.panel-body
+					a(href='/auth/facebook')
+						img(src='/images/facebook.png')
+					a(href='/auth/github')
+						img(src='/images/github.png')
+					a(href='/auth/google')
+						img(src='/images/google.png')
+					a(href='/auth/twitter')
+						img(src='/images/twitter.png')

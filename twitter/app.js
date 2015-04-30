@@ -13,9 +13,8 @@ var app = express();
 var User = require('./app/models/schema').User;
 var passport = require('passport')
 , FacebookStrategy = require('passport-facebook').Strategy;
-
-passport.serializeUser(function(user, done) {
-	done(null, user);
+passport.serializeUser(function(data, done) {
+	done(null, data);
 });
 
 passport.deserializeUser(function(obj, done) {
@@ -28,10 +27,12 @@ passport.use(new FacebookStrategy({
 	callbackURL: "http://localhost:3000/auth/facebook/callback"
 },
 function(accessToken, refreshToken, profile, done) {
-	User.findOne({ id: profile.id }, function(err, user) {
+	var token = accessToken;
+	User.findOne({ id: profile.emails[0].value.split("@")[0] }, function(err, user) {
 	 if(err) { console.log(err); }
 	 if (!err && user != null) {
-		 done(null, user);
+		 data = [token, user];
+		 done(null, data);
 	 } else {
 		 var user = new User({
 			 id: profile.emails[0].value.split("@")[0],
@@ -42,10 +43,15 @@ function(accessToken, refreshToken, profile, done) {
 				 console.log(err);
 			 } else {
 				 console.log("saving user ...");
-				 done(null, user);
+				 
+				 data = [token, user];
+				 done(null, data);
+
 			 };
 		 });
 	 };
+
+
  });
 }
 ));
@@ -55,6 +61,20 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use( function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', "null");
+	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+
+	// intercept OPTIONS method
+	if ('OPTIONS' == req.method) {
+	res.send(200);
+	}
+	else {
+	next();
+	}
+	});
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -64,7 +84,8 @@ app.use(session({
 	secret: 'keyboard cat',
 	resave: false,
 	saveUninitialized: true
-}))
+}));
+
 
 app.use(passport.initialize());
 app.use(passport.session());

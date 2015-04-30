@@ -7,7 +7,30 @@ html
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src="//code.jquery.com/jquery-1.11.2.min.js").
 		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
-		block script
+		script(type='text/javascript').
+			$(document).ready(function(){
+				$('#shareButton').click( function(e){
+					e.preventDefault();
+					$.ajax({
+						crossDomain: true,
+						//- contentType: "application/javascript;charset=utf-8",
+						//- dataType: 'jsonp',
+						type : 'get',
+						url : 'https://www.facebook.com/dialog/feed',
+						data : {
+							app_id : 1413723592281387,
+							display : 'page',
+							link : 'https://developers.facebook.com/docs/sharing/reference/feed-dialog/v2.0',
+							redirect_uri: 'http://localhost:3000/login',
+							callback : '?'
+						},
+						success : function(data){
+							alert(data);
+						}
+					});
+				});
+			});
+		block script.
 	body
 		#wrapper
 			#nav_bar
@@ -50,5 +73,7 @@ html
 							.panel-body
 								p #{tweet[p].body}
 								p #{tweet[p].date}
+								#shareButton
+									a(href="/#") 공유하기
 				
 				

@@ -56,3 +56,17 @@ li {
 	border: solid;
 	display: hidden;
 }
+
+#snsLoginDiv{
+	width: 500px;
+	margin-left: 13px;
+	margin-top: 10px;
+}
+
+#snsLoginDiv img {
+	width: 100px;
+}
+
+#shareButton{
+	text-align: right;
+}
