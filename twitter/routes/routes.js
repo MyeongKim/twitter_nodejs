@@ -23,6 +23,16 @@ router.get('/auth/facebook/callback',
 		res.redirect('/');
 	});
 
+router.get('/auth/twitter', passport.authenticate('twitter'));
+router.get('/auth/twitter/callback', 
+	passport.authenticate('twitter', { failureRedirect: '/login' }),
+	function(req, res) {
+		user = req.session.passport.user[1];
+		req.session.userId = user.id;
+		req.session.name = user.name;
+		req.session.cookie.expires = false;
+		res.redirect('/');
+	});
 
 router.get('/logout', users.logout);
 router.post('/signUp', users.signup);

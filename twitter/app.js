@@ -5,56 +5,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var passport = require('passport');
 
 var routes = require('./routes/routes');
 
 var app = express();
 
 var User = require('./app/models/schema').User;
-var passport = require('passport')
-, FacebookStrategy = require('passport-facebook').Strategy;
-passport.serializeUser(function(data, done) {
-	done(null, data);
-});
 
-passport.deserializeUser(function(obj, done) {
-	done(null, obj);
-});
-
-passport.use(new FacebookStrategy({
-	clientID: 1413723592281387,
-	clientSecret: 'a0d79c11481d32de7304cd67f3da8c9a',
-	callbackURL: "http://localhost:3000/auth/facebook/callback"
-},
-function(accessToken, refreshToken, profile, done) {
-	var token = accessToken;
-	User.findOne({ id: profile.emails[0].value.split("@")[0] }, function(err, user) {
-	 if(err) { console.log(err); }
-	 if (!err && user != null) {
-		 data = [token, user];
-		 done(null, data);
-	 } else {
-		 var user = new User({
-			 id: profile.emails[0].value.split("@")[0],
-			 name: profile.displayName
-		 });
-		 user.save(function(err) {
-			 if(err) {
-				 console.log(err);
-			 } else {
-				 console.log("saving user ...");
-				 
-				 data = [token, user];
-				 done(null, data);
-
-			 };
-		 });
-	 };
-
-
- });
-}
-));
+// Bootstrap passport config
+require('./config/passport')(passport);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
