@@ -10,6 +10,25 @@ html
 		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
 		block script
 	body
+		<!-- facebook javascript sdk -->
+		script.
+			$(document).ready(function() {
+				$.ajaxSetup({ cache: true });
+				$.getScript('//connect.facebook.net/en_US/sdk.js', function(){
+					FB.init({
+					appId: 1413723592281387,
+					version: 'v2.3'
+					});
+					$('#fbShare').click(function(){
+						FB.ui({
+							method: 'feed',
+							link: 'https://developers.facebook.com/docs/',
+							caption: '페이스북 타임라인에 글 적기',
+						}, function(response){});
+					});
+				});
+			});
+
 		#wrapper
 			#nav_bar
 				nav.navbar.navbar-default
@@ -38,6 +57,7 @@ html
 							p @#{user.id}
 							p tweets #{user.tweet_number} following #{user.following_number} follower #{user.follower_number}
 								block left
+					.fb-like(data-send='true', data-width='450', data-show-faces='true')
 
 				
 				
@@ -56,7 +76,7 @@ html
 										span.caret
 									ul.dropdown-menu(role='menu', aria-labelledby='dropdownMenu1')
 										li(role='presentation')
-											a(role='menuitem', tabindex='-1', href='#') 페이스북
+											a#fbShare(role='menuitem', tabindex='-1', href='#') 페이스북
 										li(role='presentation')
 											a(role='menuitem', tabindex='-1', href='#') 트위터
 										li(role='presentation')
