@@ -12,15 +12,15 @@ module.exports = new TwitterStrategy({
 	},
 	function(token, tokenSecret, profile, done) {
 		var token = token;
-		User.findOne({ id: profile.emails[0].value.split("@")[0] }, function(err, user) {
+		User.findOne({ id: profile.username }, function(err, user) {
 			if(err) { console.log(err); }
 			if (!err && user != null) {
 				data = [token, user];
 				done(null, data);
 			} else {
 				var user = new User({
-					id: profile.emails[0].value.split("@")[0],
-					name: profile.displayName
+					id: profile.username,
+					name: profile.username
 				});
 				user.save(function(err) {
 					if(err) {

@@ -34,6 +34,17 @@ router.get('/auth/twitter/callback',
 		res.redirect('/');
 	});
 
+router.get('/auth/google', passport.authenticate('google'));
+router.get('/auth/google/return', 
+	passport.authenticate('google', { failureRedirect: '/login' }),
+	function(req, res) {
+		user = req.session.passport.user[1];
+		req.session.userId = user.id;
+		req.session.name = user.name;
+		req.session.cookie.expires = false;
+		res.redirect('/');
+	});
+
 router.get('/logout', users.logout);
 router.post('/signUp', users.signup);
 router.get('/', users.home, tweets.getTweet);

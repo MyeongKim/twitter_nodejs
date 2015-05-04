@@ -20,14 +20,19 @@ html
 					version: 'v2.3'
 					});
 					$('#fbShare').click(function(){
+						FB.login(function(){
 						FB.ui({
 							method: 'feed',
 							link: 'https://developers.facebook.com/docs/',
 							caption: '페이스북 타임라인에 글 적기',
 						}, function(response){});
+						}, {scope: 'publish_actions'});
+						
 					});
 				});
 			});
+		<!-- facebook javascript sdk -->
+		
 
 		#wrapper
 			#nav_bar
