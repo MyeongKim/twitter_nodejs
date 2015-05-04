@@ -4,7 +4,7 @@ block script
 	script(type='text/javascript').
 		$(document).ready(function(){
 			// post new tweet
-			$('button').click( function(e){
+			$('#tweetButton').click( function(e){
 				e.preventDefault();
 				$.post("/", {tweet : $('input.form-control').val() }, function(){
 					var text = $('input.form-control').val();
@@ -15,7 +15,13 @@ block script
 					output += "<a href='/#{user.id}'>#{user.name}</a></div>";
 					output += "<div class='panel-body'>";
 					output += "<p>" + text + "</p>";
-					output += "<p>"+ date + "</p></div></div>";
+					output += "<p>"+ date + "</p>";
+					output += '<div class="dropdown">';
+					output += '<button id="dropdownMenu1" type="button" data-toggle="dropdown" aria-expanded="true" class="btn btn-default dropdown-toggle">공유하기<span class="caret"></span></button>';
+					output += '<ul role="menu" aria-labelledby="dropdownMenu1" class="dropdown-menu">';
+					output += '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">페이스북</a></li>';
+					output += '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">트위터</a></li>';
+					output += '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">기타</a></li></ul></div></div></div>';
 					$(output).prependTo($('#tweetBox'));
 					$("input.form-control").val('');
 					});
@@ -28,4 +34,4 @@ block right
 		form
 			.form-group
 				input.form-control(type='text', placeholder='무슨 일이 일어나고 있나요?')
-				button.btn.btn-default(type='submit') tweet
+				button.btn.btn-default#tweetButton(type='submit') tweet
