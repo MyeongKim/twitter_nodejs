@@ -31,8 +31,9 @@ html
 					});
 				});
 			});
-		<!-- facebook javascript sdk -->
-		
+		<!-- twitter javascript -->
+		script.
+			window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
 
 		#wrapper
 			#nav_bar
@@ -64,6 +65,7 @@ html
 								block left
 					.fb-like(data-send='true', data-width='450', data-show-faces='true')
 
+
 				
 				
 			#right_div
@@ -83,8 +85,6 @@ html
 										li(role='presentation')
 											a#fbShare(role='menuitem', tabindex='-1', href='#') 페이스북
 										li(role='presentation')
-											a(role='menuitem', tabindex='-1', href='#') 트위터
+											a(role='menuitem', tabindex='-1', href="https://twitter.com/share" text="custom share text") 트위터
 										li(role='presentation')
 											a(role='menuitem', tabindex='-1', href='#') 기타
-
-				
